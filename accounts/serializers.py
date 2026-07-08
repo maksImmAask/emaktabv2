@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
+from main.models import Student, Teacher
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -30,8 +31,21 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop("password2")
-        return User.objects.create_user(**validated_data)
 
+        user = User.objects.create_user(**validated_data)
+
+        if user.role == "student":
+            Student.objects.create(
+                user=user,
+                school_class=None,
+            )
+
+        elif user.role == "teacher":
+            Teacher.objects.create(
+                user=user,
+            )
+
+        return user
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

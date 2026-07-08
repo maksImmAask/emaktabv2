@@ -51,10 +51,16 @@ INSTALLED_APPS = [
 
     # debug (optional)
     'debug_toolbar',
+
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+
+    "corsheaders.middleware.CorsMiddleware",
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -141,6 +147,21 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
         'rest_framework.pagination.PageNumberPagination',
 
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 30,
 }
 AUTH_USER_MODEL = 'accounts.User'
+CORS_ALLOW_ALL_ORIGINS = True
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+ 
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    
+ 
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+
+ 
+    'ROTATE_REFRESH_TOKENS': True,       
+    'BLACKLIST_AFTER_ROTATION': True,   
+}

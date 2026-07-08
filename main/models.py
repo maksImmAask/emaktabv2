@@ -8,25 +8,43 @@ class SchoolClass(models.Model):
         return self.name
 
 
+from django.conf import settings
+
 class Student(models.Model):
-    username = models.CharField(max_length=150, unique=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="student_profile",
+    )
     school_class = models.ForeignKey(
         SchoolClass,
-        on_delete=models.CASCADE,
-        related_name='students'
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="students",
     )
 
-    def __str__(self):
-        return self.username
+    @property
+    def username(self):
+        return self.user.username
 
+    def __str__(self):
+        return self.user.username
+from django.conf import settings
 
 class Teacher(models.Model):
-    username = models.CharField(max_length=150, unique=True)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="teacher_profile",
+    )
+
+    @property
+    def username(self):
+        return self.user.username
 
     def __str__(self):
-        return self.username
-
-
+        return self.user.username
 class Subject(models.Model):
     name = models.CharField(max_length=100)
 
@@ -75,19 +93,27 @@ class Homework(models.Model):
     def __str__(self):
         return f"ДЗ: {self.schedule}"
 
-
 class Grade(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    schedule = models.ForeignKey(
+        Schedule,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 
     value = models.IntegerField()
+
     date = models.DateField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.student} - {self.subject} - {self.value}"
-
-
+    class Meta:
+        unique_together = (
+            "student",
+            "schedule",
+            "date",
+        )
 class Attendance(models.Model):
     STATUS_CHOICES = (
         ('present', 'Присутствовал'),
