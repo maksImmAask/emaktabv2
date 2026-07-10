@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     # swagger
     'drf_yasg',
 
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
+
     # debug (optional)
     'debug_toolbar',
 
@@ -140,6 +143,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
@@ -164,4 +168,9 @@ SIMPLE_JWT = {
  
     'ROTATE_REFRESH_TOKENS': True,       
     'BLACKLIST_AFTER_ROTATION': True,   
+}
+SPECTACULAR_SETTINGS = {
+    "TITLE": "eMaktab API",
+    "DESCRIPTION": "Документация API электронной школы",
+    "VERSION": "1.0.0",
 }
